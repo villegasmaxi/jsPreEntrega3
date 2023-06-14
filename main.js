@@ -1,5 +1,6 @@
 
 //carrito de compras
+//carrito de compras
 
 const listaDeProductos =[
   {
@@ -8,13 +9,15 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 900 ,
     img:"./images/entrada.jpg",
+    cantidad: 1,
   },
   {
     id: 2,
     nombre: "plato del dia",
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 1500,
-    img:"./images/plato-del-dia.jpg",  
+    img:"./images/plato-del-dia.jpg",
+    cantidad: 1, 
   },
   {
     id: 3,
@@ -22,6 +25,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 500,
     img:"./images/volcan-de-chocolate.jpg",
+    cantidad: 1,
   },
  
   {
@@ -30,6 +34,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 300,
     img:"./images/cafe.jpg",
+    cantidad: 1,
   },
   {
     id: 5,
@@ -37,6 +42,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 1500,
     img:"./images/picada.jpg",
+    cantidad: 1,
   },
   {
     id: 6,
@@ -44,6 +50,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 900,
     img:"./images/pastas.jpeg",
+    cantidad: 1,
   },
   {
     id: 7,
@@ -51,6 +58,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 2300,
     img:"./images/parrillada.jpeg",
+    cantidad: 1,
   },
   {
     id: 8,
@@ -58,6 +66,7 @@ const listaDeProductos =[
     descripcion: "podes ver las opciones en nuestra carta",
     precio: 1800,
     img:"./images/sushi.jpg",
+    cantidad: 1,
   },
 ];
 
@@ -78,14 +87,13 @@ listaDeProductos.forEach((producto) => {
   <img "card-img-top" src ="${producto.img}" >
   <h5 class="card-title">${producto.nombre}</h5>
   <p "card-text">${producto.descripcion}</p>
-  <h4>${producto.precio} $</h4>
-  `;
+  <h4>${producto.precio} $</h4>`;
+
   shop.append(contenido);
   let comprar = document.createElement("button");
   comprar.className = "btn btn-primary";
   comprar.innerText = "comprar";
   contenido.append(comprar);
-  //al llamar el boton comprar mando el producto con el contenido al carrito 
   comprar.addEventListener("click", () =>{
     carrito.push(
       {
@@ -94,6 +102,7 @@ listaDeProductos.forEach((producto) => {
         descripcion: producto.descripcion,
         nombre: producto.nombre,
         precio: producto.precio,
+        cantidad: producto.cantidad,
       });
       //mando al localStorage lo que se cargo al carrito
       saveLocal();
@@ -124,14 +133,16 @@ listaDeProductos.forEach((producto) => {
   }
   )
   modalHeader.append(modalButton);
-//recorremos el carrito con los productos comprados 
+//recorro el carrito con los productos comprados 
   carrito.forEach((producto) => {
   let carritoContent =  document.createElement("div");
   carritoContent.className = "modalContent d-flex align-items-center justify-content-around";
   carritoContent.innerHTML = `
   <img class="card-img-top p-2" style="max-width: 15vw" src ="${producto.img}" >
   <h5 class="card-title m-3 fs-2 ">${producto.nombre}</h5>
-  <h4 class="m-3 fs-1"> $ ${producto.precio} </h4>`;
+  <h4 class="m-3 fs-1"> $ ${producto.precio} </h4>
+  <p class= "fs-3"> Cantidad: ${producto.cantidad} </p>
+  `;
   modalContainer.append(carritoContent);
 
   let eliminar = document.createElement("span");
@@ -208,7 +219,7 @@ form.addEventListener("submit", function (event) {
   } else {
     alert("Por favor, ingresa datos válidos.");
   }
-  console.log(usuarios);
+  //console.log(usuarios);
   return usuarios;
 });
 
@@ -216,12 +227,9 @@ form.addEventListener("submit", function (event) {
 let resultadoMayores = [];
 let menoresRemovidos = false;
 
-//la funcion de order superior(filter) saca a menores de 13 años del array usuarios y arma uno nuevo menoresRemovidos con los mayores solamente
+//(filter) saca a menores de 13 años del array usuarios y arma uno nuevo menoresRemovidos con los mayores solamente
 function sacarMenores() {
   if (menoresRemovidos === false) {
-    /*resultadoMayores = usuarios.filter(function (user) {
-      return user.edad >= 13;
-    });*/
     resultadoMayores = usuarios.filter(user => {
       return user.edad >= 13;
     });
@@ -230,16 +238,21 @@ function sacarMenores() {
 }
 
 
-
 let costoCena;
 function corre() {
   sacarMenores();
   //validacion de entrada de datos debe ser un numero positivo sino alert y va de nuevo
-  costoCena = prompt("Cuanto costo la cena?");
-  while (costoCena <= 0 || isNaN(costoCena)) {
-    alert("el costo debe ser un numero positivo");
-    costoCena = prompt(" otra vez Cuanto costo la cena?");
+
+
+  //  valor del input de costoCena
+  const costoCenaInput = document.getElementById('costoCenaInput');
+   costoCena = parseFloat(costoCenaInput.value);
+
+  if (isNaN(costoCena)) {
+    alert('Por favor, ingresa un número válido.');
+    return;
   }
+
   //este for es para mostrar el nombre de quienes pusieron dinero al final de la romana
   let usuariosInfo = "";
   for (let i = 0; i < resultadoMayores.length; i++) {
@@ -289,51 +302,25 @@ function corre() {
       console.log(" Total recaudado en la romana: ", montoRecaudado);
     }
     // Si al final de la vuelta alcanza, mando alerta "A comer" y con lo que sobra agrego "Quedo X para propina."
-    let propina = montoRecaudado - costoCena;
+    let propina = montoRecaudado - costoCena; 
 
-    console.log("Resumen de métodos de pago:");
-  for (let i = 0; i < resultadoMayores.length; i++) {
-    console.log(resultadoMayores[i].nombre + " pagó " + resultadoMayores[i].comenzal + " con " + resultadoMayores[i].metodoPago);
-  }
-
+    let resumenMetodosPago = "Resumen de métodos de pago:<br>";
+    
+    for (let i = 0; i < resultadoMayores.length; i++) {
+      resumenMetodosPago += resultadoMayores[i].nombre + " pagó " + resultadoMayores[i].comenzal + " con " + resultadoMayores[i].metodoPago + "<br>";
+    }
+  
+    const resumenMetodosPagoDiv = document.getElementById("resumenMetodosPago");
+    resumenMetodosPagoDiv.innerHTML = resumenMetodosPago;
+  
     return alert(
-      //alt 96 las comilllas invertida
       `Genial ${usuariosInfo} juntamos ${montoRecaudado} y nos quedó ${propina} para la propina.`
     );
-
      // Mostrar resumen de métodos de pago
-  
   }
-
-  
-
   calculoRomana(resultadoMayores, costoCena);
 }
 
-function postre() {
-  sacarMenores();
-
-  let respuesta = prompt("dividimos el postre? CONTESTE si/no");
-  if (respuesta !== null && respuesta.toLowerCase() === "si") {
-    pedirPostre();
-  } else {
-    alert("no vamos a dividir el postre");
-  }
-}
-
-
-
-
-let costoPostre;
-function pedirPostre() {
-  costoPostre = prompt("Cuanto costo el postre?");
-  costoPostre = costoPostre / resultadoMayores.length;
-  alert(`hay que poner ${costoPostre} cada uno`);
-  console.log(`cada usuario pone ${costoPostre}`);
-}
-
-let btnPostre = document.getElementById("btnPostre");
-btnPostre.addEventListener("click", postre);
 
 let btnCena = document.getElementById("btnCena");
 btnCena.addEventListener("click", corre);
@@ -344,10 +331,7 @@ btnEquitativa.addEventListener("click", equitativa);
 let iguales;
 function equitativa(){
   sacarMenores();
-  iguales = (parseInt(costoCena) + parseInt(costoPostre)) / resultadoMayores.length;
-  alert(`Si dividimos equitativamente el postre + la cena, cada uno debe poner ${iguales}`);
-  console.log(`valor de iguales ${iguales}`);
-  console.log(resultadoMayores[0].nombre);
-  console.log(costoCena);
-}
+  iguales = (parseInt(costoCena) / resultadoMayores.length);
+  alert(`Si dividimos equitativamente la cena, cada uno debe poner ${iguales}`);
+};
 
